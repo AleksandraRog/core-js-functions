@@ -90,15 +90,14 @@ function getPowerFunction(exponent) {
  *   getPolynom(8)     => y = 8
  *   getPolynom()      => null
  */
-function getPolynom(/* coefficients */) {
-  throw new Error('Not implemented');
-  // console.log(coefficients);
-  // return (x) =>
-  //   !coefficients
-  //     ? null
-  //     : [coefficients].reduce((acc, v, i) => {
-  //         return acc + v * x ** ([coefficients].length - i - 1);
-  //       }, 0);
+function getPolynom(...coefficients) {
+  return (x) =>
+    !coefficients
+      ? null
+      : coefficients.reduce(
+          (acc, v, i) => acc + v * x ** (coefficients.length - i - 1),
+          0
+        );
 }
 
 /**
@@ -174,8 +173,18 @@ function retry(func, attempts) {
  * cos(3.141592653589793) ends
  *
  */
-function logger(/* func, logFunc */) {
-  throw new Error('Not implemented');
+function logger(func, logFunc) {
+  const f = (...args) => {
+    logFunc(
+      `${func.name}(${args.map((arg) => JSON.stringify(arg)).join(',')}) starts`
+    );
+    const result = func(...args);
+    logFunc(
+      `${func.name}(${args.map((arg) => JSON.stringify(arg)).join(',')}) ends`
+    );
+    return result;
+  };
+  return f;
 }
 
 /**
@@ -192,8 +201,11 @@ function logger(/* func, logFunc */) {
  *   partialUsingArguments(fn, 'a','b','c')('d') => 'abcd'
  *   partialUsingArguments(fn, 'a','b','c','d')() => 'abcd'
  */
-function partialUsingArguments(/* fn, ...args */) {
-  throw new Error('Not implemented');
+function partialUsingArguments(fn, ...args) {
+  const f = (...args2) => {
+    return fn(...args, ...args2);
+  };
+  return f;
 }
 
 /**
@@ -213,8 +225,14 @@ function partialUsingArguments(/* fn, ...args */) {
  *   getId4() => 7
  *   getId10() => 11
  */
-function getIdGeneratorFunction(/* startFrom */) {
-  throw new Error('Not implemented');
+function getIdGeneratorFunction(startFrom) {
+  this[`${startFrom}`] ??= startFrom;
+  const f = () => {
+    const result = this[`${startFrom}`];
+    this[`${startFrom}`] += 1;
+    return result;
+  };
+  return f;
 }
 
 module.exports = {
